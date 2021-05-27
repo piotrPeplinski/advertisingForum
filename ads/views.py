@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.db import IntegrityError
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from .forms import AdForm
 # auth
 
 
@@ -39,8 +40,21 @@ def log(request):
             error = 'Username or password is wrong. Try again.'
             return render(request, 'log.html', {'form': AuthenticationForm(), 'error': error})
 
+
+def logoutuser(request):
+    logout(request)
+    return redirect('home')
+
+
 # ads
 
 
 def home(request):
     return render(request, 'home.html')
+
+
+def create(request):
+    if request.method == 'GET':
+        return render(request, 'create.html', {'form': AdForm()})
+    else:
+        pass

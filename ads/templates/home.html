@@ -1,11 +1,10 @@
 <h1>Home page</h1>
 
 {% if user.is_authenticated %}
-    <p>You're logged in as {{user}}</p>
-    <!--LOG OUT-->
+<p>You're logged in as {{user}}</p>
+<a href="{% url 'logout' %}">Log out</a>
+<!--LOG OUT-->
 {% else %}
-    <a href="{% url 'register' %}">Register</a>
-    <a href="{% url 'log' %}">Log in</a>
+<a href="{% url 'register' %}">Register</a>
+<a href="{% url 'log' %}">Log in</a>
 {% endif %}
-
-    
