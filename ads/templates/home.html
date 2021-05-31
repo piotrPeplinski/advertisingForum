@@ -1,5 +1,5 @@
 <h1>Home page</h1>
-
+<a href="{% url 'create' %}">Create ad</a>
 {% if user.is_authenticated %}
 <p>You're logged in as {{user}}</p>
 <a href="{% url 'logout' %}">Log out</a>
@@ -8,3 +8,10 @@
 <a href="{% url 'register' %}">Register</a>
 <a href="{% url 'log' %}">Log in</a>
 {% endif %}
+
+
+{% for ad in ads %}
+    <a href="{% url 'detail' ad.id %}"><h1>{{ad.company}}</h1></a>
+    <p>{{ad.desc}}</p>
+{% endfor %}
+    
