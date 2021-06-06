@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from .forms import AdForm
 from django.contrib.auth.decorators import login_required
 from .models import Advertisement
+from django.db.models import Q
 # auth
 
 
@@ -86,7 +87,7 @@ def create(request):
 
 @login_required
 def edit(request, adId):
-    ad = get_object_or_404(Advertisement, pk=adId)  # user
+    ad = get_object_or_404(Advertisement, pk=adId, user=request.user)
     if request.method == 'GET':
         form = AdForm(instance=ad)
         return render(request, 'edit.html', {'form': form, 'ad': ad})
@@ -98,3 +99,27 @@ def edit(request, adId):
         else:
             error = 'Something went wrong. Try again.'
             return render(request, 'edit.html', {'form': form, 'ad': ad, 'error': error})
+
+
+@login_required
+def deleteAd(request, adId):
+    ad = get_object_or_404(Advertisement, pk=adId, user=request.user)
+    ad.delete()
+    return redirect('my')
+
+
+def search(request):
+    keyWords = request.POST.get('search').split(" ")
+    for word in keyWords:
+        queryset = Advertisement.objects.filter(
+            Q(company__icontains=word) | Q(desc__icontains=word))
+        try:
+            ads = ads | queryset
+        except:
+            ads = queryset
+    return render(request, 'home.html', {'ads': ads})
+
+
+def display_industry(request, industryKey):
+    ads = Advertisement.objects.filter(industry=industryKey)
+    return render(request, 'home.html', {'ads': ads})
