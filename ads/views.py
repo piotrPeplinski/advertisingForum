@@ -23,7 +23,7 @@ def register(request):
                 return render(request, 'register.html', {'form': UserCreationForm(), 'error': error})
             else:  # wykonuje sie kiedy w try nie dojdzie do bledu
                 user.save()
-                # login user
+                login(request, user)
                 return redirect('home')
         else:
             error = 'Passwords did not match. Try again.'
@@ -72,7 +72,7 @@ def my(request):
 @login_required
 def create(request):
     if request.method == 'GET':
-        return render(request, 'create.html', {'form': AdForm()})
+        return render(request, 'create.html', {'form': AdForm(), 'ad': Advertisement})
     else:
         form = AdForm(request.POST)
         if form.is_valid():
@@ -82,7 +82,7 @@ def create(request):
             return redirect('home')
         else:
             error = 'Something went wrong. Try again.'
-            return render(request, 'create.html', {'form': AdForm(), 'error': error})
+            return render(request, 'create.html', {'form': AdForm(), 'error': error, 'ad': Advertisement})
 
 
 @login_required
