@@ -19,7 +19,7 @@ class Advertisement(models.Model):
     ]
     industry = models.CharField(max_length=2, choices=industries, default='')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    #likes - ManyToManyField
+    likes = models.ManyToManyField(User, blank=True, related_name='likes')
 
     def __str__(self):
         return self.company
@@ -29,3 +29,6 @@ class Advertisement(models.Model):
             if self.industry in industry:
                 toDisplay = industry[1]
         return toDisplay
+
+    def total_likes(self):
+        return self.likes.count()

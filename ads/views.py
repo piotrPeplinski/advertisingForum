@@ -55,17 +55,31 @@ def logoutuser(request):
 
 def home(request):
     ads = Advertisement.objects.all()
+    for ad in ads:
+        if ad.likes.filter(id=request.user.id).exists():
+            ad.is_liked = True
+        else:
+            ad.is_liked = False
     return render(request, 'home.html', {'ads': ads})
 
 
 def detail(request, adId):
     ad = get_object_or_404(Advertisement, pk=adId)
+    if ad.likes.filter(id=request.user.id).exists():
+        ad.is_liked = True
+    else:
+        ad.is_liked = False
     return render(request, 'detail.html', {'ad': ad})
 
 
 @login_required
 def my(request):
     ads = Advertisement.objects.filter(user=request.user)
+    for ad in ads:
+        if ad.likes.filter(id=request.user.id).exists():
+            ad.is_liked = True
+        else:
+            ad.is_liked = False
     return render(request, 'my.html', {'ads': ads})
 
 
@@ -117,9 +131,30 @@ def search(request):
             ads = ads | queryset
         except:
             ads = queryset
+    for ad in ads:
+        if ad.likes.filter(id=request.user.id).exists():
+            ad.is_liked = True
+        else:
+            ad.is_liked = False
     return render(request, 'home.html', {'ads': ads})
 
 
 def display_industry(request, industryKey):
     ads = Advertisement.objects.filter(industry=industryKey)
+    for ad in ads:
+        if ad.likes.filter(id=request.user.id).exists():
+            ad.is_liked = True
+        else:
+            ad.is_liked = False
     return render(request, 'home.html', {'ads': ads})
+
+
+@login_required
+def like(request, adId):
+    ad = get_object_or_404(Advertisement, pk=adId)
+    # sprawdzenie czy uzytkownik lubi ogloszenie
+    if ad.likes.filter(id=request.user.id).exists():
+        ad.likes.remove(request.user)  # odlubienie
+    else:
+        ad.likes.add(request.user)
+    return redirect('detail', adId=ad.id)
